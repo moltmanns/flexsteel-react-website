@@ -1,13 +1,14 @@
-import Image from "next/image";
 import Navbar from "./Custom/Flexsteel-Navbar";
-import Footer from "./Custom/Flexsteel-Footer";
+import FlexsteelFooter from "./Custom/Flexsteel-Footer";
 
 export default function Home() {
   return (
-    <>
-    <Navbar />
-    <div className="text-5xl">Hello</div>
-    <Footer />
-    </>
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+      <main className="flex-grow">
+        <div className="text-5xl">Hello</div>
+      </main>
+      <FlexsteelFooter />
+    </div>
   );
 }

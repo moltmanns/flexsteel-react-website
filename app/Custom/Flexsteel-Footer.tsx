@@ -1,15 +1,20 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Input } from '@/components/ui/input'
 import { ArrowRight } from 'lucide-react'
 import { FaFacebookF, FaInstagram, FaPinterestP } from 'react-icons/fa'
 
 const FlexsteelFooter = () => {
-  const currentYear = new Date().getFullYear()
+  const [currentYear, setCurrentYear] = useState<number | null>(null)
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear())
+  }, [])
 
   return (
-    <footer className="bg-[#1e1e1e] text-white px-4 sm:px-6 lg:px-12 py-12">
+    <footer className="bg-[#333333] text-white w-full mt-auto px-4 sm:px-6 lg:px-0 py-12">
       <div className="max-w-[1560px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
 
         {/* DESIGN DETAILS */}
@@ -92,10 +97,12 @@ const FlexsteelFooter = () => {
       </div>
 
       {/* COPYRIGHT */}
-      <div className="mt-12 border-t border-gray-700 pt-6 text-center text-sm text-gray-400">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12 flex flex-col md:flex-row justify-between items-center">
-          <p className="mb-4 md:mb-0">&copy; {currentYear} Flexsteel Industries, Inc.</p>
-          <img src="/logo-flexsteel-light.svg" alt="Flexsteel Logo" className="h-5" />
+      <div className="w-full mt-12 border-t border-[#999998] pt-6 text-center text-sm text-white">
+        <div className="max-w-[1580px] mx-auto px-4 sm:px-6 lg:px-0 flex flex-col md:flex-row justify-between items-center">
+          <p className="mb-4 md:mb-0">
+            &copy; <span suppressHydrationWarning>{currentYear ?? '----'}</span> Flexsteel Industries, Inc.
+          </p>
+          <img src="/assets/logos/Flexsteel_Primary_Logo_White.png" alt="Flexsteel Logo" className="h-5" />
         </div>
       </div>
     </footer>
