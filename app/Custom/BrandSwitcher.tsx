@@ -13,9 +13,7 @@ const brands = [
     logo: '/assets/logos/Flexsteel_Primary_Logo_Charcoal.png',
     link: '/',
     width: 200,
-    height: 40,
-    marginTop: 'mt-0',
-    marginBottom: 'mb-3'
+    height: 40
   },
   {
     name: 'Homestyles',
@@ -23,9 +21,7 @@ const brands = [
     logo: '/assets/logos/homestyles_Primary_Orange_Logo copy.png',
     link: 'https://www.homestylesfurniture.com/',
     width: 170,
-    height: 38,
-    marginTop: 'mt-2',
-    marginBottom: 'mb-2'
+    height: 38
   },
   {
     name: 'Charisma',
@@ -33,13 +29,15 @@ const brands = [
     logo: '/assets/logos/Charisma-Primary-Logo-Color.png',
     link: '/charisma',
     width: 140,
-    height: 40,
-    marginTop: 'mt-1',
-    marginBottom: 'mb-2'
+    height: 40
   }
 ]
 
 const BrandSwitcher = () => {
+  const currentTheme = typeof window !== 'undefined'
+    ? localStorage.getItem('selected-theme') ?? 'flexsteel'
+    : 'flexsteel'
+
   const handleThemeSwitch = (theme: string) => {
     document.documentElement.setAttribute('data-theme', theme)
     localStorage.setItem('selected-theme', theme)
@@ -60,23 +58,34 @@ const BrandSwitcher = () => {
         </button>
       </PopoverTrigger>
 
-      <PopoverContent className="flex flex-col items-center p-6">
-        {brands.map(({ name, theme, logo, link, width, height, marginTop, marginBottom }) => (
-          <Link
-            key={theme}
-            href={link}
-            className={`cursor-pointer ${marginTop} ${marginBottom}`}
-            onClick={() => handleThemeSwitch(theme)}
-          >
-            <Image
-              src={logo}
-              alt={name}
-              width={width}
-              height={height}
-              className="object-contain"
-            />
-          </Link>
-        ))}
+      <PopoverContent className="flex flex-col items-center p-6 space-y-0 w-[280px]">
+        {brands.map(({ name, theme, logo, link, width, height }, index) => {
+          const isActive = currentTheme === theme
+          return (
+            <div
+              key={theme}
+              className={`w-full text-center ${index !== 0 ? 'border-t border-gray-200' : ''}`}
+            >
+              <Link
+                href={link}
+                onClick={() => handleThemeSwitch(theme)}
+                className={`
+                  block w-full py-4 transition-all duration-150
+                  hover:bg-gray-100 hover:scale-[1.01]
+                  ${isActive ? 'bg-gray-100 font-semibold' : ''}
+                `}
+              >
+                <Image
+                  src={logo}
+                  alt={name}
+                  width={width}
+                  height={height}
+                  className="object-contain mx-auto"
+                />
+              </Link>
+            </div>
+          )
+        })}
       </PopoverContent>
     </Popover>
   )
