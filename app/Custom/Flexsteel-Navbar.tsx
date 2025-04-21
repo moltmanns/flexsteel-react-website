@@ -3,7 +3,9 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { ChevronDown, ChevronRight, Heart, MapPin, Menu, Search, X } from 'lucide-react'
+import {
+  ChevronDown, ChevronRight, MapPin, Menu, Package, Search, X, Zap
+} from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import BrandSwitcher from './BrandSwitcher'
@@ -100,20 +102,13 @@ export default function Navbar() {
 
   if (!hasMounted) return null
 
-  const toggleCategory = (label: string, category: string) => {
-    setExpandedCategories(prev => ({
-      ...prev,
-      [label]: prev[label] === category ? null : category
-    }))
-  }
-
   return (
     <div className="w-full sticky top-0 z-50 bg-white border-b text-sm" suppressHydrationWarning>
       <Link href="https://www.alliance4safety.org/new-age-recall" target="_blank" className="block bg-[#333333] text-white text-center py-2 text-xs">
         New Age Recall Information
       </Link>
 
-
+      {/* Top Nav Row */}
       <div className="relative w-full max-w-[1600px] mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-0 py-4">
         <div className="flex items-center space-x-4">
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
@@ -127,15 +122,19 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center space-x-6">
-          <Link href="#" className="hidden md:flex items-center gap-1 text-[#333333]">
+          <Link href="#" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer">
             <MapPin className="w-4 h-4" /> Find Flexsteel
           </Link>
-          <Link href="#" className="hidden md:flex items-center gap-1 text-[#333333]">
-            <Heart className="w-4 h-4" /> Favorites
+          <Link href="/whats-new" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer">
+            <Zap className="w-4 h-4" /> What's New
+          </Link>
+          <Link href="/store" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer">
+            <Package className="w-4 h-4" /> Store
           </Link>
         </div>
       </div>
 
+      {/* Mega Menu Row */}
       <div className="hidden md:flex border-t border-gray-100 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-0 py-2 justify-between items-center">
         {Object.entries(megaMenu).map(([label, categories]) => (
           <div key={label} className="relative">
