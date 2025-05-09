@@ -1,10 +1,9 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import {
-  ChevronDown, ChevronRight, MapPin, Menu, Package, Search, X, Zap
+  ChevronDown, MapPin, Menu, Package, Search, X, Zap
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -79,20 +78,24 @@ const megaMenu = {
   }
 }
 
+// (👇 the rest of your component code remains unchanged from the scroll-based version I gave earlier)
+
 export default function Navbar() {
   const [hasMounted, setHasMounted] = useState(false)
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [openLabel, setOpenLabel] = useState<string | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [expandedCategories, setExpandedCategories] = useState<{ [key: string]: string | null }>({})
   const [searchOpen, setSearchOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  let autoCloseTimer: NodeJS.Timeout
 
-  useEffect(() => {
-    setHasMounted(true)
-  }, [])
+  useEffect(() => { setHasMounted(true) }, [])
 
   useEffect(() => {
     const handleScroll = () => {
+      const offset = window.scrollY
+      setScrolled(offset > 80)
       setOpenLabel(null)
       setMobileMenuOpen(false)
     }
@@ -100,123 +103,147 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setOpenLabel(null)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  useEffect(() => {
+    if (openLabel) {
+      autoCloseTimer = setTimeout(() => setOpenLabel(null), 3000)
+      const cancelTimer = () => clearTimeout(autoCloseTimer)
+      dropdownRef.current?.addEventListener('mousemove', cancelTimer)
+      return () => {
+        clearTimeout(autoCloseTimer)
+        dropdownRef.current?.removeEventListener('mousemove', cancelTimer)
+      }
+    }
+  }, [openLabel])
+
   if (!hasMounted) return null
 
   return (
-    <div className="w-full sticky top-0 z-50 bg-white border-b text-sm" suppressHydrationWarning>
+    <div className="w-full sticky top-0 z-50 bg-white border-b text-sm transition-all duration-300" suppressHydrationWarning>
       <Link href="https://www.alliance4safety.org/new-age-recall" target="_blank" className="block bg-[#333333] text-white text-center py-2 text-xs">
         New Age Recall Information
       </Link>
 
-      {/* Top Nav Row */}
-      <div className="relative w-full max-w-[1600px] mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-0 py-4">
-        <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </Button>
-          <SearchDrawer open={searchOpen} onOpenChange={setSearchOpen} />
-        </div>
+      {/* Compact or Default Header */}
+      <div
+  className={`relative w-full max-w-[1600px] mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-2 overflow-hidden transition-[padding,height] duration-300 ease-in-out ${
+    scrolled ? 'h-12 py-2' : 'h-auto py-4'
+  }`}
+>
 
-        <div className="absolute left-1/2 -translate-x-1/2">
-          <BrandSwitcher />
-        </div>
-
-        <div className="flex items-center space-x-6">
-          <Link href="#" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer">
-            <MapPin className="w-4 h-4" /> Find Flexsteel
-          </Link>
-          <Link href="/whats-new" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer">
-            <Zap className="w-4 h-4" /> What's New
-          </Link>
-          <Link href="/store" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer">
-            <Package className="w-4 h-4" /> Store
-          </Link>
-        </div>
+        {scrolled ? (
+          <>
+            <div className="flex items-center space-x-4">
+              <BrandSwitcher />
+            </div>
+              <div className="absolute left-1/2 -translate-x-1/2 w-full flex justify-center items-center">
+                <input
+                  type="text"
+                  placeholder="Search Flexsteel..."
+                  className="w-full max-w-[750px] py-1 px-3 rounded-full border border-[#333333]/30 text-sm"
+                />
+              </div>
+            <div className="flex items-center space-x-4">
+              <Link href="#" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer"><MapPin className="w-4 h-4" /></Link>
+              <Link href="/whats-new" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer"><Zap className="w-4 h-4" /></Link>
+              <Link href="/store" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer"><Package className="w-4 h-4" /></Link>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center space-x-4">
+              <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </Button>
+              <SearchDrawer open={searchOpen} onOpenChange={setSearchOpen} />
+            </div>
+            <div className="absolute left-1/2 -translate-x-1/2">
+              <BrandSwitcher />
+            </div>
+            <div className="flex items-center space-x-6">
+              <Link href="#" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer"><MapPin className="w-4 h-4" /> Find Flexsteel</Link>
+              <Link href="/whats-new" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer"><Zap className="w-4 h-4" /> What's New</Link>
+              <Link href="/store" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer"><Package className="w-4 h-4" /> Store</Link>
+            </div>
+          </>
+        )}
       </div>
 
-      {/* Mega Menu Row */}
-      <div className="hidden md:flex border-t border-gray-100 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-0 py-2 justify-between items-center">
-        {Object.entries(megaMenu).map(([label, categories]) => (
-          <div key={label} className="relative">
-            <Popover open={openLabel === label} onOpenChange={() => {}}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    if (openLabel === label) {
-                      setOpenLabel(null)
-                    } else {
-                      setOpenLabel(label)
-                      setActiveCategory(Object.keys(categories)[0])
-                    }
-                  }}
-                  className={`flex items-center gap-1 text-[#333333] hover:text-black cursor-pointer ${openLabel === label ? 'font-semibold text-black' : ''}`}
-                >
-                  {label}
-                  <ChevronDown className="w-4 h-4" />
-                </Button>
-              </PopoverTrigger>
+      {/* Mega Menu */}
+      {!scrolled && (
+        <div className="hidden md:flex border-t border-gray-100 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-0 py-2 justify-between items-center">
+          {Object.entries(megaMenu).map(([label, categories]) => (
+            <div key={label} className="relative">
+              <button
+                onClick={() => {
+                  if (openLabel === label) {
+                    setOpenLabel(null)
+                  } else {
+                    setOpenLabel(label)
+                    setActiveCategory(Object.keys(categories)[0])
+                  }
+                }}
+                className={`flex items-center gap-1 px-2 py-1 rounded text-[#333333] hover:text-black ${openLabel === label ? 'font-semibold text-black' : ''}`}
+              >
+                {label}
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
+          <Link href="/pages/zecliner" className="text-[#333333] hover:text-black font-medium text-sm px-2 py-2">Zecliner</Link>
+          <Link href="/pages/statements" className="text-[#333333] hover:text-black font-medium text-sm px-2 py-2">Statements</Link>
+        </div>
+      )}
 
-              <AnimatePresence>
-                {openLabel === label && (
-                  <div className="fixed inset-0 top-full z-50 flex justify-center pointer-events-none">
-                    <div className="w-full max-w-[1560px] px-4 sm:px-6 lg:px-12 pointer-events-auto">
-                      <PopoverContent className="w-full px-6 py-6 bg-white border rounded-md shadow-lg mt-1">
-                        <motion.div
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          <div className="flex flex-col md:flex-row">
-                            <div className="w-full md:w-1/5 pr-6 border-r mb-4 md:mb-0">
-                              <ul className="space-y-2">
-                                {Object.keys(categories).map((category) => (
-                                  <li
-                                    key={category}
-                                    onClick={() => setActiveCategory(category)}
-                                    className={`text-gray-800 font-medium hover:underline cursor-pointer ${activeCategory === category ? 'text-black' : ''}`}
-                                  >
-                                    {category}
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                            <div className="w-full md:w-4/5 pl-0 md:pl-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                              {activeCategory &&
-                                categories[activeCategory]?.map((product) => (
-                                  <div key={product.name} className="text-center cursor-pointer">
-                                    <Link href={product.href} className="hover:opacity-90">
-                                      <Image
-                                        src={product.image}
-                                        alt={product.name}
-                                        width={400}
-                                        height={260}
-                                        className="mx-auto object-cover rounded"
-                                      />
-                                      <div className="mt-2 text-sm font-medium text-[#333333]">{product.name}</div>
-                                    </Link>
-                                  </div>
-                                ))}
-                            </div>
-                          </div>
-                        </motion.div>
-                      </PopoverContent>
+      {/* Mega Dropdown */}
+      <AnimatePresence>
+        {openLabel && (
+          <motion.div
+            ref={dropdownRef}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="absolute top-full left-0 right-0 bg-white border-t shadow-xl z-50"
+          >
+            <div className="max-w-[1600px] mx-auto px-2 py-6 flex flex-col md:flex-row">
+              <div className="w-full md:w-1/5 pr-6 border-r mb-4 md:mb-0">
+                <ul className="space-y-2">
+                  {Object.keys(megaMenu[openLabel]).map((category) => (
+                    <li
+                      key={category}
+                      onClick={() => setActiveCategory(category)}
+                      className={`text-gray-800 font-medium hover:underline cursor-pointer ${activeCategory === category ? 'text-black' : ''}`}
+                    >
+                      {category}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="w-full md:w-4/5 pl-0 md:pl-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {activeCategory &&
+                  (megaMenu[openLabel] as Record<string, { name: string; image: string; href: string }[]>)[activeCategory]?.map((product) => (
+                    <div key={product.name} className="text-center cursor-pointer">
+                      <Link href={product.href} className="hover:opacity-90">
+                        <Image src={product.image} alt={product.name} width={400} height={260} className="mx-auto object-cover rounded" />
+                        <div className="mt-2 text-sm font-medium text-[#333333]">{product.name}</div>
+                      </Link>
                     </div>
-                  </div>
-                )}
-              </AnimatePresence>
-            </Popover>
-          </div>
-        ))}
-
-        <Link href="/pages/zecliner" className="text-[#333333] hover:text-black font-medium text-sm px-2 py-2">
-          Zecliner
-        </Link>
-        <Link href="/pages/statements" className="text-[#333333] hover:text-black font-medium text-sm px-2 py-2">
-          Statements
-        </Link>
-      </div>
+                  ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
