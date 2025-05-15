@@ -78,8 +78,6 @@ const megaMenu = {
   }
 }
 
-// (👇 the rest of your component code remains unchanged from the scroll-based version I gave earlier)
-
 export default function Navbar() {
   const [hasMounted, setHasMounted] = useState(false)
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
@@ -128,51 +126,69 @@ export default function Navbar() {
   if (!hasMounted) return null
 
   return (
-    <div className="w-full sticky top-0 z-50 bg-white border-b text-sm transition-all duration-300" suppressHydrationWarning>
+    <div className="w-full sticky top-0 z-50 bg-white border-b text-sm" suppressHydrationWarning>
       <Link href="https://www.alliance4safety.org/new-age-recall" target="_blank" className="block bg-[#333333] text-white text-center py-2 text-xs">
         New Age Recall Information
       </Link>
 
       {/* Compact or Default Header */}
       <div
-  className={`relative w-full max-w-[1600px] mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-2 overflow-hidden transition-[padding,height] duration-300 ease-in-out ${
-    scrolled ? 'h-12 py-2' : 'h-auto py-4'
-  }`}
->
-
+        className={`relative w-full max-w-[1600px] mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-2 overflow-hidden transition-all duration-300 ease-in-out ${
+          scrolled ? 'h-16 py-2' : 'h-auto py-4'
+        }`}
+      >
         {scrolled ? (
           <>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 z-10">
               <BrandSwitcher />
             </div>
-              <div className="absolute left-1/2 -translate-x-1/2 w-full flex justify-center items-center">
+            <div className="absolute left-1/2 -translate-x-1/2 w-full flex justify-center items-center px-4 z-0">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+                className="w-full max-w-[750px]"
+              >
                 <input
                   type="text"
                   placeholder="Search Flexsteel..."
-                  className="w-full max-w-[750px] py-1 px-3 rounded-full border border-[#333333]/30 text-sm"
+                  className="w-full py-1 px-3 rounded-full border border-[#333333]/30 text-sm focus:outline-none focus:ring-1 focus:ring-[#333333]/30 transition-all"
                 />
-              </div>
-            <div className="flex items-center space-x-4">
-              <Link href="#" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer"><MapPin className="w-4 h-4" /></Link>
-              <Link href="/whats-new" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer"><Zap className="w-4 h-4" /></Link>
-              <Link href="/store" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer"><Package className="w-4 h-4" /></Link>
+              </motion.div>
+            </div>
+            <div className="flex items-center space-x-4 z-10">
+              <Link href="#" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer hover:text-black transition-colors">
+                <MapPin className="w-4 h-4" />
+              </Link>
+              <Link href="/whats-new" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer hover:text-black transition-colors">
+                <Zap className="w-4 h-4" />
+              </Link>
+              <Link href="/store" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer hover:text-black transition-colors">
+                <Package className="w-4 h-4" />
+              </Link>
             </div>
           </>
         ) : (
           <>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 z-10">
               <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </Button>
               <SearchDrawer open={searchOpen} onOpenChange={setSearchOpen} />
             </div>
-            <div className="absolute left-1/2 -translate-x-1/2">
+            <div className="absolute left-1/2 -translate-x-1/2 z-10">
               <BrandSwitcher />
             </div>
-            <div className="flex items-center space-x-6">
-              <Link href="#" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer"><MapPin className="w-4 h-4" /> Find Flexsteel</Link>
-              <Link href="/whats-new" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer"><Zap className="w-4 h-4" /> What's New</Link>
-              <Link href="/store" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer"><Package className="w-4 h-4" /> Store</Link>
+            <div className="flex items-center space-x-6 z-10">
+              <Link href="#" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer hover:text-black transition-colors">
+                <MapPin className="w-4 h-4" /> Find Flexsteel
+              </Link>
+              <Link href="/whats-new" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer hover:text-black transition-colors">
+                <Zap className="w-4 h-4" /> What's New
+              </Link>
+              <Link href="/store" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer hover:text-black transition-colors">
+                <Package className="w-4 h-4" /> Store
+              </Link>
             </div>
           </>
         )}
@@ -180,7 +196,12 @@ export default function Navbar() {
 
       {/* Mega Menu */}
       {!scrolled && (
-        <div className="hidden md:flex border-t border-gray-100 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-0 py-2 justify-between items-center">
+        <motion.div
+          initial={{ opacity: 1 }}
+          animate={{ opacity: scrolled ? 0 : 1 }}
+          transition={{ duration: 0.3 }}
+          className="hidden md:flex border-t border-gray-100 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-0 py-2 justify-between items-center"
+        >
           {Object.entries(megaMenu).map(([label, categories]) => (
             <div key={label} className="relative">
               <button
@@ -192,16 +213,22 @@ export default function Navbar() {
                     setActiveCategory(Object.keys(categories)[0])
                   }
                 }}
-                className={`flex items-center gap-1 px-2 py-1 rounded text-[#333333] hover:text-black ${openLabel === label ? 'font-semibold text-black' : ''}`}
+                className={`flex items-center gap-1 px-2 py-1 rounded text-[#333333] hover:text-black transition-colors ${
+                  openLabel === label ? 'font-semibold text-black' : ''
+                }`}
               >
                 {label}
-                <ChevronDown className="w-4 h-4" />
+                <ChevronDown className="w-4 h-4 transition-transform duration-200" />
               </button>
             </div>
           ))}
-          <Link href="/pages/zecliner" className="text-[#333333] hover:text-black font-medium text-sm px-2 py-2">Zecliner</Link>
-          <Link href="/pages/statements" className="text-[#333333] hover:text-black font-medium text-sm px-2 py-2">Statements</Link>
-        </div>
+          <Link href="/pages/zecliner" className="text-[#333333] hover:text-black font-medium text-sm px-2 py-2 transition-colors">
+            Zecliner
+          </Link>
+          <Link href="/pages/statements" className="text-[#333333] hover:text-black font-medium text-sm px-2 py-2 transition-colors">
+            Statements
+          </Link>
+        </motion.div>
       )}
 
       {/* Mega Dropdown */}
@@ -213,7 +240,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-full left-0 right-0 bg-white border-t shadow-xl z-50"
+            className="absolute top-full left-0 right-0 bg-white border-t shadow-xl z-40"
           >
             <div className="max-w-[1600px] mx-auto px-2 py-6 flex flex-col md:flex-row">
               <div className="w-full md:w-1/5 pr-6 border-r mb-4 md:mb-0">
@@ -222,7 +249,9 @@ export default function Navbar() {
                     <li
                       key={category}
                       onClick={() => setActiveCategory(category)}
-                      className={`text-gray-800 font-medium hover:underline cursor-pointer ${activeCategory === category ? 'text-black' : ''}`}
+                      className={`text-gray-800 font-medium hover:underline cursor-pointer transition-colors ${
+                        activeCategory === category ? 'text-black underline' : ''
+                      }`}
                     >
                       {category}
                     </li>
@@ -232,12 +261,18 @@ export default function Navbar() {
               <div className="w-full md:w-4/5 pl-0 md:pl-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {activeCategory &&
                   (megaMenu[openLabel] as Record<string, { name: string; image: string; href: string }[]>)[activeCategory]?.map((product) => (
-                    <div key={product.name} className="text-center cursor-pointer">
-                      <Link href={product.href} className="hover:opacity-90">
+                    <motion.div
+                      key={product.name}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="text-center cursor-pointer"
+                    >
+                      <Link href={product.href} className="hover:opacity-90 transition-opacity">
                         <Image src={product.image} alt={product.name} width={400} height={260} className="mx-auto object-cover rounded" />
                         <div className="mt-2 text-sm font-medium text-[#333333]">{product.name}</div>
                       </Link>
-                    </div>
+                    </motion.div>
                   ))}
               </div>
             </div>
