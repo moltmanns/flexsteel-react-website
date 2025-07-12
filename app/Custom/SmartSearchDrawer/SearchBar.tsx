@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useRef, useEffect } from 'react';
-import { Search, Mic, MicOff, Loader2 } from 'lucide-react';
+import { Search, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
 import VoiceSearch from './VoiceSearch';

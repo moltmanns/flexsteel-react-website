@@ -84,7 +84,7 @@ const PopularQueries: React.FC<PopularQueriesProps> = ({ onQuerySelect }) => {
               className="w-full text-left text-sm text-flexsteel-primary hover:text-black p-3 hover:bg-white/70 rounded-lg transition-colors font-medium cursor-pointer"
               whileHover={{ x: 4 }}
             >
-              "{suggestion}"
+              &quot;{suggestion}&quot;
             </motion.button>
           ))}
         </div>

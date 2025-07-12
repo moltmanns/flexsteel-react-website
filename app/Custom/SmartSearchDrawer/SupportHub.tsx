@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react';
-import { Phone, Mail, MessageSquare, Clock, MapPin, Calendar } from 'lucide-react';
+import { Phone, Mail, MessageSquare, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -70,11 +70,11 @@ const SupportHub: React.FC<SupportHubProps> = ({ isVisible }) => {
     <div className="h-full flex flex-col">
       <div className="mb-4">
         <h2 className="text-xl font-semibold text-flexsteel-primary mb-2">Support Center</h2>
-        <p className="text-sm text-gray-600">We're here to help</p>
+        <p className="text-sm text-gray-600">We&apos;re here to help</p>
       </div>
 
       <ScrollArea className="flex-1">
-        <div className="space-y-6 pr-4">
+        <div className="space-y-6 pr-4 pb-8">
           {/* Contact Methods */}
           <div>
             <h3 className="text-sm font-semibold text-gray-700 mb-3">Contact Us</h3>

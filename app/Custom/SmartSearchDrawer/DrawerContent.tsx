@@ -65,8 +65,6 @@ const DrawerContent: React.FC<DrawerContentProps> = ({
             searchResults={searchResults}
             hasSearched={hasSearched}
             isSearching={isSearching}
-            isOpen={isOpen}
-            onConfigChange={onConfigChange}
             onClearSearch={onClearSearch}
           />
         )}

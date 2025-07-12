@@ -4,9 +4,7 @@ import React from 'react';
 import SearchBar from './SearchBar';
 import SearchResults from './SearchResults';
 import PopularQueries from './PopularQueries';
-import SearchConfig from './SearchConfig';
 import { Product } from '@/app/types/search';
-import { SearchConfig as SearchConfigType } from '@/app/services/search.service';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 
@@ -20,8 +18,6 @@ interface SearchModeProps {
   searchResults: Product[];
   hasSearched: boolean;
   isSearching: boolean;
-  isOpen: boolean;
-  onConfigChange: (config: SearchConfigType) => void;
   onClearSearch?: () => void;
 }
 
@@ -35,8 +31,6 @@ const SearchMode: React.FC<SearchModeProps> = ({
   searchResults,
   hasSearched,
   isSearching,
-  isOpen,
-  onConfigChange,
   onClearSearch
 }) => {
   return (
@@ -85,7 +79,7 @@ const SearchMode: React.FC<SearchModeProps> = ({
             >
               <div className="mb-6 flex items-center justify-between">
                 <p className="text-base font-medium text-gray-700">
-                  {searchResults.length} results for "{searchQuery}"
+                  {searchResults.length} results for &quot;{searchQuery}&quot;
                 </p>
                 {onClearSearch && (
                   <button
@@ -106,7 +100,7 @@ const SearchMode: React.FC<SearchModeProps> = ({
               exit={{ opacity: 0, y: -20 }}
               className="text-center py-8"
             >
-              <p className="text-gray-600 mb-2">No results found for "{searchQuery}"</p>
+              <p className="text-gray-600 mb-2">No results found for &quot;{searchQuery}&quot;</p>
               <p className="text-sm text-gray-500">Try different keywords or browse our categories</p>
               {onClearSearch && (
                 <button

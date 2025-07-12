@@ -17,7 +17,7 @@ const SearchConfig: React.FC<SearchConfigProps> = ({ onConfigChange }) => {
     limit: 10
   });
 
-  const handleConfigUpdate = (key: keyof SearchConfigType, value: any) => {
+  const handleConfigUpdate = (key: keyof SearchConfigType, value: boolean | number) => {
     const newConfig = { ...config, [key]: value };
     setConfig(newConfig);
     onConfigChange(newConfig);

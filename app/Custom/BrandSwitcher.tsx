@@ -53,8 +53,9 @@ const BrandSwitcher = () => {
             width={200}
             height={40}
             priority
+            className="h-4 md:h-7 w-auto object-contain"
           />
-          <ChevronDown className="w-4 h-4 text-[#333333]" />
+          <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 text-[#333333]" />
         </button>
       </PopoverTrigger>
 

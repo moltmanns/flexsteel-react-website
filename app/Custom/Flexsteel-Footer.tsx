@@ -96,13 +96,32 @@ const FlexsteelFooter = () => {
         </div>
       </div>
 
-      {/* COPYRIGHT */}
+      {/* COPYRIGHT AND LEGAL LINKS */}
       <div className="w-full mt-8 sm:mt-12 border-t border-[#999998] pt-4 sm:pt-6 text-center text-xs sm:text-sm text-white">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0">
-          <p className="order-2 sm:order-1">
-            &copy; <span suppressHydrationWarning>{currentYear ?? '----'}</span> Flexsteel Industries, Inc.
-          </p>
-          <img src="/assets/logos/Flexsteel_Primary_Logo_White.png" alt="Flexsteel Logo" className="h-4 sm:h-5 order-1 sm:order-2" />
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Legal Links */}
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 mb-4">
+            <Link href="/privacy-policy" className="text-white hover:text-gray-300 transition-colors underline">
+              Privacy Policy
+            </Link>
+            <Link href="/terms-conditions" className="text-white hover:text-gray-300 transition-colors underline">
+              Terms & Conditions
+            </Link>
+            <a href="#" className="text-white hover:text-gray-300 transition-colors underline">
+              Accessibility
+            </a>
+            <a href="#" className="text-white hover:text-gray-300 transition-colors underline">
+              Site Map
+            </a>
+          </div>
+          
+          {/* Copyright and Logo */}
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0">
+            <p className="order-2 sm:order-1">
+              &copy; <span suppressHydrationWarning>{currentYear ?? '----'}</span> Flexsteel Industries, Inc. All rights reserved.
+            </p>
+            <img src="/assets/logos/Flexsteel_Primary_Logo_White.png" alt="Flexsteel Logo" className="h-4 sm:h-5 order-1 sm:order-2" />
+          </div>
         </div>
       </div>
     </footer>

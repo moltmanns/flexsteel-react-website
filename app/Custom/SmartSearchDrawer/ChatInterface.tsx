@@ -2,11 +2,10 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Loader2, RotateCcw } from 'lucide-react';
-import { ChatMessage, Product } from '@/app/types/search';
+import { ChatMessage } from '@/app/types/search';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { Badge } from '@/components/ui/badge';
 
 interface ChatInterfaceProps {
   messages: ChatMessage[];
@@ -29,8 +28,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   useEffect(() => {
     // Scroll to bottom when new messages arrive
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    const scrollContainer = document.querySelector('[data-radix-scroll-area-viewport]');
+    if (scrollContainer) {
+      scrollContainer.scrollTop = scrollContainer.scrollHeight;
     }
   }, [messages, isTyping]);
 
@@ -75,7 +75,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       </div>
 
       {/* Messages */}
-      <ScrollArea ref={scrollRef} className="flex-1 pr-4">
+      <ScrollArea className="flex-1 pr-4">
         {messages.length === 0 && (
           <div className="text-center py-8">
             <p className="text-gray-500 mb-4">No messages yet. Start a conversation!</p>
@@ -90,14 +90,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   onClick={() => onSendMessage(suggestion)}
                   className="w-full text-left text-sm p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
                 >
-                  "{suggestion}"
+                  &quot;{suggestion}&quot;
                 </button>
               ))}
             </div>
           </div>
         )}
 
-        <div className="space-y-4 pb-4">
+        <div className="space-y-4 pb-8">
           <AnimatePresence>
             {messages.map((message) => (
               <motion.div

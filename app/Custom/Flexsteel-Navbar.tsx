@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import {
-  ChevronDown, MapPin, Menu, Package, Search, Zap
+  ChevronDown, MapPin, Menu, Package, Search, Zap, ShoppingCart
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -82,9 +82,10 @@ const megaMenu = {
 interface MobileMenuProps {
   categories: typeof megaMenu
   onClose: () => void
+  isRetailer: boolean
 }
 
-const MobileMenu = ({ categories, onClose }: MobileMenuProps) => {
+const MobileMenu = ({ categories, onClose, isRetailer }: MobileMenuProps) => {
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null)
   const [expandedSubcategory, setExpandedSubcategory] = useState<string | null>(null)
 
@@ -142,8 +143,13 @@ const MobileMenu = ({ categories, onClose }: MobileMenuProps) => {
             <MapPin className="w-4 h-4" /> Find Flexsteel
           </Link>
           <Link href="/whats-new" className="flex items-center gap-2 text-[#333333] hover:text-black transition-colors cursor-pointer" onClick={onClose}>
-            <Zap className="w-4 h-4" /> What's New
+            <Zap className="w-4 h-4" /> What&apos;s New
           </Link>
+          {isRetailer && (
+            <Link href="/backroom" className="flex items-center gap-2 text-[#333333] hover:text-black transition-colors cursor-pointer" onClick={onClose}>
+              <ShoppingCart className="w-4 h-4" /> Backroom
+            </Link>
+          )}
           <Link href="/store" className="flex items-center gap-2 text-[#333333] hover:text-black transition-colors cursor-pointer" onClick={onClose}>
             <Package className="w-4 h-4" /> Store
           </Link>
@@ -160,10 +166,17 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [isRetailer, setIsRetailer] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const autoCloseTimer = useRef<NodeJS.Timeout | null>(null)
 
-  useEffect(() => { setHasMounted(true) }, [])
+  useEffect(() => { 
+    setHasMounted(true)
+    
+    // Check visitor type from localStorage
+    const visitorType = localStorage.getItem('visitor-type')
+    setIsRetailer(visitorType === 'retailer')
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -220,41 +233,36 @@ export default function Navbar() {
         <div className="relative w-full max-w-[1600px] mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4">
         {scrolled ? (
           <>
-            <div className="flex items-center space-x-4 z-10">
+            <div className="flex items-center z-10 pl-2">
+              <button
+                onClick={() => setSearchOpen(true)}
+                className="px-3 py-1.5 bg-flexsteel-primary text-white text-sm font-medium rounded-full hover:bg-black transition-colors flex items-center gap-2 cursor-pointer"
+              >
+                <Search className="w-4 h-4" />
+                <span className="hidden sm:inline">Flexsteel AI</span>
+              </button>
+            </div>
+            <div className="absolute left-1/2 -translate-x-1/2 z-10">
               <BrandSwitcher />
             </div>
-            <div className="absolute left-1/2 -translate-x-1/2 w-full max-w-[600px] flex justify-center items-center px-4 z-0">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3 }}
-                className="w-full"
-              >
-                <input
-                  type="text"
-                  placeholder="Search Flexsteel..."
-                  className="w-full py-1 px-3 rounded-full border border-[#333333]/30 text-sm focus:outline-none focus:ring-1 focus:ring-[#333333]/30 transition-all"
-                />
-              </motion.div>
-            </div>
-            <div className="flex items-center space-x-4 z-10">
+            <div className="flex items-center space-x-2 sm:space-x-4 z-10 pr-2">
               <Link href="#" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer hover:text-black transition-colors">
                 <MapPin className="w-4 h-4" />
               </Link>
               <Link href="/whats-new" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer hover:text-black transition-colors">
                 <Zap className="w-4 h-4" />
               </Link>
+              {isRetailer && (
+                <Link href="/backroom" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer hover:text-black transition-colors">
+                  <ShoppingCart className="w-4 h-4" />
+                </Link>
+              )}
               <Link href="/store" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer hover:text-black transition-colors">
                 <Package className="w-4 h-4" />
               </Link>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="flex items-center space-x-2 sm:space-x-4 z-10">
               <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="md:hidden cursor-pointer">
+                  <Button variant="ghost" size="icon" className="md:hidden cursor-pointer ml-2">
                     <Menu className="w-5 h-5" />
                   </Button>
                 </SheetTrigger>
@@ -262,9 +270,14 @@ export default function Navbar() {
                   <SheetHeader className="p-6 pb-4 border-b">
                     <SheetTitle>Menu</SheetTitle>
                   </SheetHeader>
-                  <MobileMenu categories={megaMenu} onClose={() => setMobileMenuOpen(false)} />
+                  <MobileMenu categories={megaMenu} onClose={() => setMobileMenuOpen(false)} isRetailer={isRetailer} />
                 </SheetContent>
               </Sheet>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center z-10 pl-2">
               <button
                 onClick={() => setSearchOpen(true)}
                 className="px-3 py-1.5 bg-flexsteel-primary text-white text-sm font-medium rounded-full hover:bg-black transition-colors flex items-center gap-2 cursor-pointer"
@@ -276,16 +289,34 @@ export default function Navbar() {
             <div className="absolute left-1/2 -translate-x-1/2 z-10">
               <BrandSwitcher />
             </div>
-            <div className="flex items-center space-x-3 sm:space-x-6 z-10">
-              <Link href="#" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer hover:text-black transition-colors text-sm lg:text-base">
+            <div className="flex items-center space-x-3 sm:space-x-6 z-10 pr-2">
+              <Link href="#" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer hover:text-black transition-colors text-xs lg:text-sm">
                 <MapPin className="w-4 h-4" /> <span className="hidden lg:inline">Find Flexsteel</span>
               </Link>
-              <Link href="/whats-new" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer hover:text-black transition-colors text-sm lg:text-base">
-                <Zap className="w-4 h-4" /> <span className="hidden lg:inline">What's New</span>
+              <Link href="/whats-new" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer hover:text-black transition-colors text-xs lg:text-sm">
+                <Zap className="w-4 h-4" /> <span className="hidden lg:inline">What&apos;s New</span>
               </Link>
-              <Link href="/store" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer hover:text-black transition-colors text-sm lg:text-base">
+              {isRetailer && (
+                <Link href="/backroom" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer hover:text-black transition-colors text-xs lg:text-sm">
+                  <ShoppingCart className="w-4 h-4" /> <span className="hidden lg:inline">Backroom</span>
+                </Link>
+              )}
+              <Link href="/store" className="hidden md:flex items-center gap-1 text-[#333333] cursor-pointer hover:text-black transition-colors text-xs lg:text-sm">
                 <Package className="w-4 h-4" /> <span className="hidden lg:inline">Store</span>
               </Link>
+              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="md:hidden cursor-pointer ml-2">
+                    <Menu className="w-5 h-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-[300px] sm:w-[400px] p-0">
+                  <SheetHeader className="p-6 pb-4 border-b">
+                    <SheetTitle>Menu</SheetTitle>
+                  </SheetHeader>
+                  <MobileMenu categories={megaMenu} onClose={() => setMobileMenuOpen(false)} isRetailer={isRetailer} />
+                </SheetContent>
+              </Sheet>
             </div>
           </>
         )}
@@ -299,9 +330,8 @@ export default function Navbar() {
             initial={{ opacity: 1 }}
             animate={{ opacity: scrolled ? 0 : 1 }}
             transition={{ duration: 0.3 }}
-            className="hidden md:flex max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-2 justify-between items-center flex-wrap"
+            className="hidden md:flex max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-2 justify-evenly items-center flex-wrap"
           >
-          <div className="flex items-center gap-6 lg:gap-8">
             {Object.entries(megaMenu).map(([label, categories]) => (
               <div key={label} className="relative">
                 <button
@@ -322,15 +352,12 @@ export default function Navbar() {
                 </button>
               </div>
             ))}
-          </div>
-          <div className="flex items-center gap-6 lg:gap-8">
-            <Link href="/pages/zecliner" className="text-[#333333] hover:text-black font-medium text-sm px-2 py-2 transition-colors cursor-pointer">
+            <Link href="/pages/zecliner" className="text-[#333333] hover:text-black font-medium text-sm px-2 py-1 rounded transition-colors cursor-pointer">
               Zecliner
             </Link>
-            <Link href="/pages/statements" className="text-[#333333] hover:text-black font-medium text-sm px-2 py-2 transition-colors cursor-pointer">
+            <Link href="/pages/statements" className="text-[#333333] hover:text-black font-medium text-sm px-2 py-1 rounded transition-colors cursor-pointer">
               Statements
             </Link>
-          </div>
           </motion.div>
         </div>
       )}
@@ -363,21 +390,43 @@ export default function Navbar() {
                 </ul>
               </div>
               <div className="w-full md:w-4/5 pl-0 md:pl-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-                {activeCategory &&
-                  (megaMenu[openLabel as keyof typeof megaMenu] as Record<string, { name: string; image: string; href: string }[]>)[activeCategory]?.map((product) => (
+                {activeCategory && (
+                  <>
+                    {/* First 3 products */}
+                    {(megaMenu[openLabel as keyof typeof megaMenu] as Record<string, { name: string; image: string; href: string }[]>)[activeCategory]?.slice(0, 3).map((product) => (
+                      <motion.div
+                        key={product.name}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="text-center cursor-pointer"
+                      >
+                        <Link href={product.href} className="hover:opacity-90 transition-opacity cursor-pointer">
+                          <Image src={product.image} alt={product.name} width={400} height={260} className="mx-auto object-cover rounded" />
+                          <div className="mt-2 text-sm font-medium text-[#333333]">{product.name}</div>
+                        </Link>
+                      </motion.div>
+                    ))}
+                    
+                    {/* View All box as 4th item */}
                     <motion.div
-                      key={product.name}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.2 }}
+                      transition={{ duration: 0.2, delay: 0.3 }}
                       className="text-center cursor-pointer"
                     >
-                      <Link href={product.href} className="hover:opacity-90 transition-opacity cursor-pointer">
-                        <Image src={product.image} alt={product.name} width={400} height={260} className="mx-auto object-cover rounded" />
-                        <div className="mt-2 text-sm font-medium text-[#333333]">{product.name}</div>
+                      <Link href={`/${openLabel?.toLowerCase().replace(/\s+/g, '-')}/${activeCategory?.toLowerCase().replace(/\s+/g, '-')}`} className="block group">
+                        <div className="bg-flexsteel-primary rounded-lg h-[260px] flex flex-col items-center justify-center text-white hover:bg-black transition-all duration-300 shadow-lg">
+                          <div className="text-xl font-bold mb-2">View All</div>
+                          <div className="text-sm mb-4">{activeCategory}</div>
+                          <div className="px-4 py-2 bg-white text-flexsteel-primary rounded-lg text-sm font-medium group-hover:bg-gray-100 transition-colors">
+                            Explore →
+                          </div>
+                        </div>
                       </Link>
                     </motion.div>
-                  ))}
+                  </>
+                )}
               </div>
             </div>
           </motion.div>

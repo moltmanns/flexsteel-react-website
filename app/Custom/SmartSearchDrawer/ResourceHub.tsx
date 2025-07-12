@@ -9,8 +9,29 @@ interface ResourceHubProps {
   isVisible: boolean;
 }
 
+interface BaseResource {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  type: string;
+}
+
+interface FileResource extends BaseResource {
+  size: string;
+}
+
+interface VideoResource extends BaseResource {
+  duration: string;
+}
+
+interface LinkResource extends BaseResource {
+  link: boolean;
+}
+
+type Resource = FileResource | VideoResource | LinkResource;
+
 const ResourceHub: React.FC<ResourceHubProps> = ({ isVisible }) => {
-  const resources = [
+  const resources: { category: string; items: Resource[] }[] = [
     {
       category: 'Care & Maintenance',
       items: [
@@ -104,7 +125,7 @@ const ResourceHub: React.FC<ResourceHubProps> = ({ isVisible }) => {
           variants={container}
           initial="hidden"
           animate={isVisible ? "show" : "hidden"}
-          className="space-y-6 pr-4"
+          className="space-y-6 pr-4 pb-8"
         >
           {resources.map((section, sectionIndex) => (
             <motion.div key={sectionIndex} variants={item}>
@@ -134,17 +155,17 @@ const ResourceHub: React.FC<ResourceHubProps> = ({ isVisible }) => {
                           <span className="text-xs text-gray-500">
                             {resource.type}
                           </span>
-                          {(resource as any).size && (
+                          {'size' in resource && (
                             <span className="text-xs text-gray-500">
-                              {(resource as any).size}
+                              {resource.size}
                             </span>
                           )}
-                          {(resource as any).duration && (
+                          {'duration' in resource && (
                             <span className="text-xs text-gray-500">
-                              {(resource as any).duration}
+                              {resource.duration}
                             </span>
                           )}
-                          {(resource as any).link ? (
+                          {'link' in resource ? (
                             <ExternalLink className="w-3 h-3 text-gray-400" />
                           ) : (
                             <Download className="w-3 h-3 text-gray-400" />

@@ -19,7 +19,7 @@ export default function HeroSection() {
           height="1080"
           onError={() => setVideoError(true)}
         >
-          <source src="/assets/videos/henry-clip.mp4" type="video/mp4" />
+          <source src="https://cdn.shopify.com/videos/c/o/v/1c253e5c901b483392a7dd098dc80e14.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       ) : (

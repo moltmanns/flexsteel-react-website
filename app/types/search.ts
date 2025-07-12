@@ -5,6 +5,7 @@ export interface Product {
   image: string;
   category?: string;
   description?: string;
+  price?: string;
   badge?: {
     text: string;
     color: 'red' | 'blue' | 'green' | 'purple' | 'orange' | 'yellow';
