@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Rubik:wght@400;600&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300..700;1,300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Rubik:wght@400;600&display=swap');
 
 
 @custom-variant dark (&:is(.dark *));
@@ -92,12 +91,37 @@
   --foreground: oklch(0.145 0 0);
 }
 
+* {
+  font-family: 'Montserrat', sans-serif;
+}
+
 body{
   font-family: 'Montserrat', sans-serif;
 }
 h1{
   font-family: 'Cormorant', serif;
   font-weight: 300;
+}
+
+/* Flexsteel brand color utilities */
+.text-flexsteel-primary {
+  color: #333333;
+}
+
+.text-flexsteel-accent {
+  color: #B2B4B2;
+}
+
+.bg-flexsteel-primary {
+  background-color: #333333;
+}
+
+.bg-flexsteel-accent {
+  background-color: #B2B4B2;
+}
+
+.border-flexsteel-primary {
+  border-color: #333333;
 }
 
 .dark {
